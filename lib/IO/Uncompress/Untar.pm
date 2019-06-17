@@ -27,7 +27,7 @@ sub new {
   $this->{z} = new IO::Uncompress::AnyUncompress $this->{handle};
   $this->{ts} = Archive::Tar::Stream->new(infh => $this->{z}); $this->{ts}->SafeCopy(0);
   $this->{opt}=shift;
-  $this->{raw}=0;
+  $this->{raw}='';
   $this->{header}={};
   $this->{loc}=0;
   $this->{i}=0;
