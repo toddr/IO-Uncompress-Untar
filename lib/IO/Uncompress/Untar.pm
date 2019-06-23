@@ -74,21 +74,31 @@ sub getHeaderInfo {
 sub read {
   my $this = shift;
   my $bytes = $_[1] || 512*1600;
+  ++$this->{rec}; # debugging - block accidental recursion
+#warn "$this $bytes r=" . $this->{rec};
   my $offset = $_[2];
   die "non zero offset not implimented" if($offset);
   my $maxleft=$this->{header}->{size}-$this->{i};
   $bytes=$maxleft if($bytes>$maxleft);
   if((!defined $this->{raw})||($bytes>length($this->{raw}))) {
     my $blks=int(($bytes-length( $this->{raw} )-1 )/512)+1;
-    $this->{raw}.=$this->{ts}->ReadBlocks($blks);
+    $this->{raw}.=$this->{ts}->ReadBlocks($blks) if($this->{rec}<2);
+warn "Blocked recursion $this->{rec}" if($this->{rec}>1);    
     $this->{i}+=$blks*512; $this->{loc}+=$blks*512;
   }
+  --$this->{rec};
   $_[0]=substr($this->{raw},$this->{readoffset},$bytes);
   $this->{raw}=substr($this->{raw},$bytes);
   #$this->{readoffset}+=$bytes;
+#warn "$this got=" . length($_[0]);
   return length($_[0]);
 } # read
 
+sub close {
+  my $this = shift;
+  # $this->{ts}->close();
+  $this->{z}->close();
+}
 
 1;
 
