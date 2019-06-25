@@ -4,3 +4,4 @@ MANIFEST
 README
 t/IO-Uncompress-Untar.t
 lib/IO/Uncompress/Untar.pm
+cpanfile
